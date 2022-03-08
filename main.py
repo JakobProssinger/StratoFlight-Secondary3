@@ -1,17 +1,31 @@
 import smbus
 import time
-from INA260_MINIMAL import INA260
+from csv_handler.csv_handler import CSV_HANDLER
+from sensor.ina260 import INA260
+from controller.controller import Controller
 
 DEVICE_BUS = 1
-DEVICE_ADDR = 0x40
+INA260_PRIMARY_ADDRESS = 0x40
+INA260_SECONDARY_ADDRESS = 0x41
 
 
 def main():
-    ina260 = INA260(DEVICE_ADDR)
-    ina260.reset_chip()
-    print(ina260.read_configuration_register())
-    ina260.activate_average(1)
-    print(ina260.read_configuration_register())
+    ina_solar_primary = INA260(
+        name="INA260-solar-primary", address=INA260_PRIMARY_ADDRESS)
+    ina_solar_primary.activate_average()
+    ina_solar_secondary = INA260(
+        name="INA260-solar-secondary", address=INA260_SECONDARY_ADDRESS)
+    ina_solar_secondary.activate_average()
+
+    strato_csv_handler = csv_handler.csv_handler(
+        "C:\Programming\StratoFlight-INA260\data\sensor_data.csv")
+
+    strato_controller = Controller("seconday3_controller", strato_csv_handler)
+    strato_controller.addSensor(ina_solar_primary)
+    strato_controller.addSensor(ina_solar_secondary)
+    while True:
+
+        time.sleep(30)
 
 
 if __name__ == '__main__':
