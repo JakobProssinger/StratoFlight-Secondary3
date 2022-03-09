@@ -196,7 +196,7 @@ class INA260(sensor.Sensor):
         """
         return self.read_ina(_INA260_CONFIG_ADDR, 2)
 
-    def activate_average(self, samples: int) -> None:
+    def activate_average(self, samples: int = 1) -> None:
         """
         activate averaging of the INA260 sensor data
 
